@@ -1,0 +1,35 @@
+%h1= @project.title
+%p= @project.description
+
+= link_to "Edit", edit_project_path(@project), class: "btn btn-info"
+|
+= link_to "Delete", @project, method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-danger"
+%hr
+
+%script#task-template{type: "x-tmpl-mustache"}
+  .well.draggable{data: {url: "{{url}}"}}
+    .glyphicon.glyphicon-th
+    {{title}}
+
+#task-errors
+= simple_form_for [@project, Task.new] do |f|
+  = f.input :title
+  = f.submit "Save Task", class: "btn btn-primary"
+
+.row
+  .col-sm-6
+    Pending Tasks
+    .well
+      #pending-tasks.droppable
+        - @pending_tasks.each do |task|
+          .well.draggable{data: {url: project_task_path(@project, task)}}
+            .glyphicon.glyphicon-th
+            = task.title
+  .col-sm-6
+    Completed Tasks
+    .well
+      #completed-tasks.droppable
+        - @completed_tasks.each do |task|
+          .well.draggable{data: {url: project_task_path(@project, task)}}
+            .glyphicon.glyphicon-th
+            = task.title
